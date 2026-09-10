@@ -1,58 +1,45 @@
-# Yenerator · native panel design
+# Yenerator · keyboard-first native panel
 
-A compact Omarchy utility: dice hero, two generated values, a country selector,
-and inline refresh/copy actions. The panel uses the same 380 px base width and
-14 px section rhythm as the native network, audio, power, and Bluetooth panels.
-All dimensions, typography, colors, borders, hover fills, and focus rings follow
-Omarchy tokens and the current bar theme.
+The popup uses Omarchy's native 380 px panel, hero, country dropdown, separators,
+and CursorSurface row highlighting. All typography, colors, borders, spacing,
+and focus treatment come from the current shell theme.
 
-Generated identifiers are readable results instead of input fields. The INSS
-birth date and sex sit underneath as secondary metadata. The IBAN country is a
-compact native dropdown beside its section label. Long IBANs wrap at group
-boundaries; copying always uses the original raw value. A brief checkmark and
-single-line status confirm copying. “MOCK DATA” remains visible in the hero.
+![Belgian records](design.png)
+
+The country selector applies to every visible record. Belgium displays INSS and
+IBAN. Other supported countries display IBAN and explain that INSS is only
+available for Belgium; a Belgian identifier is never presented as belonging to
+another country.
+
+![French records](design-fr.png)
+
+## Interaction
+
+- **R** generates fresh values for all visible fields.
+- **C** copies the hovered or keyboard-selected row without separators.
+- **Up/Down** selects a row. **Tab/Shift+Tab** moves through the country control
+  and rows. Hovering a row selects it, with a shared native highlight.
+- **Escape** closes the country menu first, then the popup.
+- Opening the country dropdown suspends record shortcuts. Ctrl/Alt/Super
+  combinations and auto-repeated R/C events do not regenerate or copy records.
+- A short confirmation names the copied record. There are no per-row action
+  buttons; the footer keeps the shortcuts visible.
+
+The dice glyph remains configurable through the widget's `icon` setting. See
+[the icon options](icons.md).
 
 ## Native references
 
-Read-only visual references on the installed system:
+Read-only references were the installed network, audio, power, and Bluetooth
+panels under `/usr/share/omarchy/shell/plugins/panels/`. The implementation uses
+`Ui.Panel`, `Ui.KeyboardPanel`, `Ui.PanelHero`, `Ui.PanelSectionHeader`,
+`Ui.PanelSeparator`, `Ui.CursorSurface`, and `Ui.Dropdown` directly.
 
-- `/usr/share/omarchy/shell/plugins/panels/network/Panel.qml`: compact hero,
-  section headers, separators, and inline row actions.
-- `/usr/share/omarchy/shell/plugins/panels/audio/Panel.qml`: flat content,
-  restrained hierarchy, and token-based spacing.
-- `/usr/share/omarchy/shell/plugins/panels/power/Panel.qml`: 380 px panel and
-  icon/title/uppercase-status hero.
-- `/usr/share/omarchy/shell/plugins/panels/bluetooth/Panel.qml`: secondary row
-  metadata and trailing action buttons.
+## Validation
 
-The implementation directly reuses `Ui.Panel`, `Ui.KeyboardPanel`,
-`Ui.PanelHero`, `Ui.PanelSectionHeader`, `Ui.PanelSeparator`,
-`Ui.PanelActionButton`, and `Ui.Dropdown` from
-`/usr/share/omarchy/shell/Ui/`. No packaged shell files are changed.
-
-## Icon and interaction
-
-The default is Nerd Font Material Design `dice-multiple-outline` (U+F1156).
-`shuffle` (U+F049D) is an alternative. The panel's `icon` setting controls both
-the bar glyph and hero, keeping them consistent.
-
-Tab/Shift+Tab walk the refresh, copy, and country controls. Enter or Space
-activates actions; the native dropdown supports arrows and Enter. Escape closes
-the dropdown first, then the panel. Native button focus rings and accessible
-action names identify every icon control. Outside-click dismissal and bar
-positioning remain owned by `Ui.KeyboardPanel`.
-
-## Preview and validation
-
-![Rendered Yenerator panel](design.png)
-
-![French IBAN layout](design-fr.png)
-
-The panel was rendered in a temporary Quickshell process with the current Forest
-Night theme and compared side by side with the installed native audio panel.
-Belgian and French result layouts have no clipping. Country selection updates the
-IBAN, the dropdown opens, and closing the panel closes the dropdown. The generator
-tests, Omarchy manifest validation, and QML parser check pass.
-
-Keyboard traversal, actual clipboard contents, and additional display scales
-still need interactive verification.
+Generator tests and native manifest validation pass. `tests/keyboard.sh` runs
+real Qt keyboard and hover events in a temporary Quickshell popup: refresh,
+copy dispatch, country-menu keyboard selection, hiding unsupported fields,
+arrow/Tab navigation, modifier handling, and Escape. Copy dispatch is intercepted
+so the test does not change the user's clipboard. Rendering is checked for
+Belgium and the longer French IBAN. Other display scales remain untested.

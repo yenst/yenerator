@@ -3,14 +3,15 @@
 A small, offline **Omarchy shell plugin** for generating mock data while developing and testing. Uses the installed shell's native popup, theme, and keyboard controls.
 
 - Belgian INSS / rijksregisternummer with a real generated birth date and valid national-register checksum, including the rule for births from 2000 onward.
-- IBAN country selector: Belgium, Netherlands, Germany, and France.
-- Generate either value independently. Changing country immediately generates a matching IBAN.
-- Inline copy buttons put the raw value on the clipboard, without spaces or punctuation.
-- Tab between controls, Enter/Space to activate, and Escape or an outside click to dismiss.
+- One country selector for all fields: Belgium, Netherlands, Germany, and France. Belgium shows INSS and IBAN; other countries show IBAN only.
+- Press **R** to regenerate all visible records. Changing country also generates fresh records.
+- Hover a row and press **C** to copy its raw value, without spaces or punctuation.
+- Use **Up/Down** or **Tab/Shift+Tab** to select a row without the mouse, then **C** to copy. **Escape** closes the country menu first, then the popup.
+- R/C shortcuts are inactive while the country menu is open.
 
 ![Yenerator native Omarchy popup](docs/design.png)
 
-The popup uses Omarchy's native hero, section headers, separators, country dropdown, and action buttons. Its default dice icon can be replaced through the widget's `icon` setting. See the [icon options](docs/icons.md) and [design notes](docs/design.md).
+The popup uses Omarchy's native hero, section headers, separators, country dropdown, and highlighted rows. Its default dice icon can be replaced through the widget's `icon` setting. See the [icon options](docs/icons.md) and [design notes](docs/design.md).
 
 ## Install
 
@@ -59,6 +60,8 @@ npm test
 omarchy plugin validate .
 ```
 
-Tests use Node's built-in test runner; there are no npm dependencies. `Generator.js` is plain JavaScript shared by the QML widget and tests. Add future generators there and expose them in `Widget.qml`.
+Run `bash tests/keyboard.sh` in an active Omarchy desktop session for the QML keyboard interaction checks. The test opens a temporary popup and intercepts copy dispatch without changing your clipboard.
+
+Generator tests use Node's built-in test runner; there are no npm dependencies. `Generator.js` is plain JavaScript shared by the QML widget and tests. Add future generators there and expose them in `Widget.qml`.
 
 The manifest and QML/JavaScript entry files live at the repository root so the project can be installed directly with Omarchy. No custom installation script is needed.
