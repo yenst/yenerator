@@ -16,6 +16,11 @@ function ibanDigits(raw) {
   return [...rotated].map((char) => /[A-Z]/.test(char) ? String(char.charCodeAt(0) - 55) : char).join('');
 }
 
+function bsnChecksum(raw) {
+  const weights = [9, 8, 7, 6, 5, 4, 3, 2, -1];
+  return [...raw].reduce((sum, digit, index) => sum + Number(digit) * weights[index], 0);
+}
+
 test('exports the supported country catalog', () => {
   assert.deepEqual(JSON.parse(JSON.stringify(sandbox.countries)), [
     { code: 'BE', name: 'Belgium' },
@@ -98,6 +103,53 @@ test('honors fixed INSS date and sex, including the 2000 checksum boundary', () 
   assert.equal(Number(after.raw.slice(6, 9)) % 2, 0);
   assert.equal(BigInt(before.raw.slice(9)), 97n - (BigInt(before.raw.slice(0, 9)) % 97n));
   assert.equal(BigInt(after.raw.slice(9)), 97n - (BigInt(`2${after.raw.slice(0, 9)}`) % 97n));
+});
+
+test('generates randomized nine-digit BSNs with valid eleven checksums', () => {
+  for (let i = 0; i < 2000; i += 1) {
+    const result = sandbox.generateBsn();
+    assert.match(result.raw, /^\d{9}$/);
+    assert.equal(result.formatted, result.raw);
+    assert.notEqual(result.raw, '000000000');
+    assert.equal(bsnChecksum(result.raw) % 11, 0);
+  }
+});
+
+test('preserves leading zeroes in BSNs', () => {
+  const leadingZeroRandom = { Math: Object.create(Math) };
+  const values = [0, 0, 0, 0, 0, 0, 0, 0.1];
+  leadingZeroRandom.Math.random = () => values.shift() || 0;
+  vm.runInNewContext(source, leadingZeroRandom);
+  const result = leadingZeroRandom.generateBsn();
+  assert.equal(result.raw, '000000012');
+  assert.equal(result.formatted, result.raw);
+  assert.equal(bsnChecksum(result.raw) % 11, 0);
+});
+
+test('rejects invalid BSN prefixes without modifying the next valid candidate', () => {
+  // Includes remainder 10 with first digits 6 and 9, plus the all-zero case.
+  for (const invalidPrefix of ['60000000', '90000003', '00000000']) {
+    const controlled = { Math: Object.create(Math) };
+    const digits = [...(invalidPrefix + '01234567')];
+    controlled.Math.random = () => {
+      assert.ok(digits.length, 'must accept the next valid prefix');
+      return Number(digits.shift()) / 10;
+    };
+    vm.runInNewContext(source, controlled);
+    const result = controlled.generateBsn();
+    assert.equal(result.raw, '012345672');
+    assert.equal(bsnChecksum(result.raw) % 11, 0);
+    assert.equal(digits.length, 0);
+  }
+});
+
+test('fails promptly when the random source only produces invalid BSNs', () => {
+  const controlled = { Math: Object.create(Math) };
+  let calls = 0;
+  controlled.Math.random = () => { calls += 1; return 0; };
+  vm.runInNewContext(source, controlled);
+  assert.throws(() => controlled.generateBsn(), /Unable to generate a BSN/);
+  assert.equal(calls, 800);
 });
 
 test('rejects malformed, impossible, out-of-range, and unsupported inputs', () => {

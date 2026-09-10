@@ -15,26 +15,38 @@ Ui.Panel {
     property string icon: setting("icon", "\uF2C3")
     property string country: "BE"
     property var inss: null
+    property var bsn: null
     property var iban: null
+    property var email: null
     property string selectedKind: "INSS"
     property string copiedKind: ""
     readonly property bool hasInss: country === "BE"
-    onSelectedKindChanged: if (!hasInss && selectedKind === "INSS") selectedKind = "IBAN"
+    readonly property bool hasBsn: country === "NL"
+    readonly property var visibleRows: {
+        var rows = []
+        if (hasInss) rows.push(inssRow)
+        if (hasBsn) rows.push(bsnRow)
+        rows.push(ibanRow)
+        rows.push(emailRow)
+        return rows
+    }
     readonly property color foreground: bar ? bar.foreground : Color.foreground
     readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
     readonly property color muted: Qt.darker(foreground, 1.4)
 
     function refresh() {
         inss = hasInss ? Generator.generateInss() : null
+        bsn = hasBsn ? Generator.generateBsn() : null
         iban = Generator.generateIban(country)
+        email = Generator.generateEmail()
         copiedKind = ""
         feedbackTimer.stop()
-        if (!hasInss) selectedKind = "IBAN"
+        selectedKind = visibleRows[selectedRowIndex()].kind
     }
     function selectCountry(value) {
         if (country === value) return
         country = value
-        selectedKind = hasInss ? "INSS" : "IBAN"
+        selectedKind = visibleRows[0].kind
         refresh()
     }
     function copyValue(value, label) {
@@ -45,14 +57,21 @@ Ui.Panel {
         copiedKind = label
         feedbackTimer.restart()
     }
+    function selectedRowIndex() {
+        for (var i = 0; i < visibleRows.length; i += 1) {
+            if (visibleRows[i].kind === selectedKind) return i
+        }
+        return 0
+    }
     function copySelected() {
-        var record = selectedKind === "INSS" && hasInss ? inss : iban
-        if (record) copyValue(record.raw, selectedKind === "INSS" && hasInss ? "INSS" : "IBAN")
+        var row = visibleRows[selectedRowIndex()]
+        if (row.record) copyValue(row.record.raw, row.kind)
     }
     function moveRow(direction) {
-        selectedKind = hasInss && direction < 0 ? "INSS" : "IBAN"
-        if (selectedKind === "INSS") inssRow.forceActiveFocus(Qt.TabFocusReason)
-        else ibanRow.forceActiveFocus(Qt.TabFocusReason)
+        var index = Math.max(0, Math.min(visibleRows.length - 1, selectedRowIndex() + direction))
+        var row = visibleRows[index]
+        selectedKind = row.kind
+        row.forceActiveFocus(Qt.TabFocusReason)
     }
     function handleKey(event) {
         if (!opened || countryPicker.popupOpen) return
@@ -143,12 +162,12 @@ Ui.Panel {
                         id: countryPicker
                         objectName: "countryPicker"
                         Layout.fillWidth: true
-                        label: "Country for all fields"
+                        label: "Country for identity and banking fields"
                         showLabel: false
                         value: root.country
                         foreground: root.foreground
                         fontFamily: root.fontFamily
-                        Accessible.name: "Country for all fields"
+                        Accessible.name: "Country for identity and banking fields"
                         options: Generator.countries.map(function(c) {
                             return { value: c.code, label: c.name + " (" + c.code + ")" }
                         })
@@ -162,18 +181,33 @@ Ui.Panel {
                         visible: root.hasInss
                         kind: "INSS"
                         title: "RIJKSREGISTERNUMMER · INSS"
-                        value: root.inss ? root.inss.formatted : ""
+                        record: root.inss
                         detail: root.inss ? root.inss.birthDate + " · " + root.inss.sex : ""
+                    }
+                    RecordRow {
+                        id: bsnRow
+                        objectName: "bsnRow"
+                        visible: root.hasBsn
+                        kind: "BSN"
+                        title: "BURGERSERVICENUMMER · BSN"
+                        record: root.bsn
                     }
                     RecordRow {
                         id: ibanRow
                         objectName: "ibanRow"
                         kind: "IBAN"
                         title: "IBAN"
-                        value: root.iban ? root.iban.formatted : ""
+                        record: root.iban
+                    }
+                    RecordRow {
+                        id: emailRow
+                        objectName: "emailRow"
+                        kind: "Email"
+                        title: "EMAIL"
+                        record: root.email
                     }
                     Text {
-                        visible: !root.hasInss
+                        visible: !root.hasInss && !root.hasBsn
                         Layout.fillWidth: true
                         text: "INSS is available for Belgium only."
                         color: root.muted
@@ -185,7 +219,7 @@ Ui.Panel {
                     Text {
                         Layout.fillWidth: true
                         textFormat: root.copiedKind ? Text.PlainText : Text.RichText
-                        text: root.copiedKind ? root.copiedKind + " copied · without separators" : "<b>R</b>efresh&nbsp;&nbsp; <b>C</b>opy"
+                        text: root.copiedKind ? root.copiedKind + " copied" + (root.copiedKind === "Email" ? "" : " · without separators") : "<b>R</b>efresh&nbsp;&nbsp; <b>C</b>opy"
                         color: root.copiedKind ? root.foreground : root.muted
                         font.family: root.fontFamily
                         font.pixelSize: Style.font.caption
@@ -200,7 +234,8 @@ Ui.Panel {
         id: row
         required property string kind
         required property string title
-        required property string value
+        required property var record
+        readonly property string value: record ? record.formatted : ""
         property string detail: ""
         Layout.fillWidth: true
         implicitHeight: labels.implicitHeight + Style.space(16)
@@ -210,7 +245,7 @@ Ui.Panel {
         onActiveFocusChanged: if (activeFocus && visible) root.selectedKind = kind
         Accessible.role: Accessible.ListItem
         Accessible.name: title + ": " + value
-        Accessible.description: "Press C to copy without separators. Press R to regenerate all fields."
+        Accessible.description: kind === "Email" ? "Press C to copy the email address. Press R to regenerate all fields." : "Press C to copy without separators. Press R to regenerate all fields."
         Accessible.onPressAction: { root.selectedKind = kind; root.copySelected() }
         Keys.onPressed: function(event) { root.handleKey(event) }
 

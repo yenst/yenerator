@@ -3,9 +3,11 @@
 A small, offline **Omarchy shell plugin** for generating mock data while developing and testing. Uses the installed shell's native popup, theme, and keyboard controls.
 
 - Belgian INSS / rijksregisternummer with a real generated birth date and valid national-register checksum, including the rule for births from 2000 onward.
-- One country selector for all fields: Belgium, Netherlands, Germany, and France. Belgium shows INSS and IBAN; other countries show IBAN only.
+- Dutch BSN / burgerservicenummer with nine digits and a valid elfproef checksum.
+- Random mock email addresses using `example.com`, available for every country.
+- One country selector for identity and banking fields: Belgium, Netherlands, Germany, and France. Belgium shows INSS and IBAN; Netherlands shows BSN and IBAN; Germany and France show IBAN. All countries also show Email.
 - Press **R** to regenerate all visible records. Changing country also generates fresh records.
-- Hover a row and press **C** to copy its raw value, without spaces or punctuation.
+- Hover a row and press **C** to copy its raw value: identifiers without formatting separators, email addresses intact.
 - Use **Up/Down** or **Tab/Shift+Tab** to select a row without the mouse, then **C** to copy. **Escape** closes the country menu first, then the popup.
 - R/C shortcuts are inactive while the country menu is open.
 
@@ -49,9 +51,11 @@ Disable with `omarchy plugin disable jihmy.yenerator`. Remove through `omarchy p
 
 These values are generated locally and have valid formats and checksums. They are **not reserved test identifiers** and can coincide with real identifiers. Use them only in test environments. No identity or account lookup is performed, and the plugin stores no generated history (your desktop clipboard manager may retain copied values).
 
+BSNs satisfy the Dutch elfproef and preserve leading zeros. They are synthetic, not officially issued or reserved test BSNs.
+
 INSS generation covers ordinary Belgian national-register numbers, not BIS numbers. IBANs pass the international MOD-97 check; Belgian BBAN checks and French numeric RIB keys are also calculated. Bank codes and accounts are synthetic. Bank existence, account existence, and additional bank-specific checks are not guaranteed; the Netherlands uses the synthetic bank code `TEST`.
 
-References: [Belgian national-register number specification](https://www.ibz.rrn.fgov.be/sites/default/files/documents/nl/rijksregister/onderrichtingen/IT-lijst/IT000_Rijksregisternummer.pdf) and [SWIFT IBAN Registry](https://www.swift.com/sites/default/files/files/iban-registry-v101.pdf).
+References: [Belgian national-register number specification](https://www.ibz.rrn.fgov.be/sites/default/files/documents/nl/rijksregister/onderrichtingen/IT-lijst/IT000_Rijksregisternummer.pdf), [Dutch BSN specification](https://www.rvig.nl/media/799/download), and [SWIFT IBAN Registry](https://www.swift.com/sites/default/files/files/iban-registry-v101.pdf).
 
 ## Development
 

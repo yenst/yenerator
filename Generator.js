@@ -32,6 +32,11 @@ function _randomDigits(length) {
     return result;
 }
 
+function generateEmail() {
+    var raw = "user" + _randomDigits(12) + "@example.com";
+    return { raw: raw, formatted: raw };
+}
+
 function _dateParts(date) {
     return {
         year: date.getUTCFullYear(),
@@ -120,6 +125,24 @@ function generateInss(options) {
         birthDate: _dateString(date),
         sex: sex
     };
+}
+
+function generateBsn() {
+    // Rejection sampling keeps valid prefixes equally likely. Bound retries so
+    // a broken random source cannot block the QML event loop indefinitely.
+    for (var attempt = 0; attempt < 100; attempt += 1) {
+        var prefix = _randomDigits(8);
+        var sum = 0;
+        for (var i = 0; i < prefix.length; i += 1) {
+            sum += Number(prefix.charAt(i)) * (9 - i);
+        }
+        var checkDigit = sum % 11;
+        if (checkDigit === 10 || prefix === "00000000") continue;
+
+        var raw = prefix + String(checkDigit);
+        return { raw: raw, formatted: raw };
+    }
+    throw new Error("Unable to generate a BSN after 100 attempts");
 }
 
 function _mod97(value) {

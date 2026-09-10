@@ -7,7 +7,7 @@ and focus treatment come from the current shell theme.
 ![Belgian records](design.png)
 
 The country selector applies to every visible record. Belgium displays INSS and
-IBAN. Other supported countries display IBAN and explain that INSS is only
+IBAN. Netherlands displays BSN and IBAN. Germany and France display IBAN and explain that INSS is only
 available for Belgium; a Belgian identifier is never presented as belonging to
 another country.
 
