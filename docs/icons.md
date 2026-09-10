@@ -15,7 +15,7 @@ These are existing Nerd Fonts Material Design glyphs, verified against the [offi
 | ID card | 󰶫 | `nf-md-card_account_details_outline` | `U+F0DAB` | Identity-focused generator |
 | Code braces | 󰅩 | `nf-md-code_braces` | `U+F0169` | Developer utility |
 
-**Default recommendation:** dice multiple outline. It represents random samples and leaves room for generators beyond INSS and IBAN.
+**Selected default:** `nf-fa-id_card_o` / `nf-fa-drivers_license_o` (U+F2C3), the outlined ID-card glyph. The preview above shows the earlier alternatives.
 
 Action glyphs: `nf-md-refresh` (U+F0450) for regeneration and `nf-md-content_copy` (U+F018F) for copying.
 

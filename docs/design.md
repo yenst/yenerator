@@ -25,7 +25,7 @@ another country.
 - A short confirmation names the copied record. There are no per-row action
   buttons; the footer keeps the shortcuts visible.
 
-The dice glyph remains configurable through the widget's `icon` setting. See
+The outlined ID-card glyph (U+F2C3) remains configurable through the widget's `icon` setting. See
 [the icon options](icons.md).
 
 ## Native references

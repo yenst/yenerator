@@ -11,7 +11,7 @@ A small, offline **Omarchy shell plugin** for generating mock data while develop
 
 ![Yenerator native Omarchy popup](docs/design.png)
 
-The popup uses Omarchy's native hero, section headers, separators, country dropdown, and highlighted rows. Its default dice icon can be replaced through the widget's `icon` setting. See the [icon options](docs/icons.md) and [design notes](docs/design.md).
+The popup uses Omarchy's native hero, section headers, separators, country dropdown, and highlighted rows. Its default outlined ID-card icon (U+F2C3) can be replaced through the widget's `icon` setting. See the [icon options](docs/icons.md) and [design notes](docs/design.md).
 
 ## Install
 

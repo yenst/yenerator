@@ -12,7 +12,7 @@ Ui.Panel {
     implicitWidth: button.implicitWidth
     implicitHeight: button.implicitHeight
 
-    property string icon: setting("icon", "\uDB84\uDD56")
+    property string icon: setting("icon", "\uF2C3")
     property string country: "BE"
     property var inss: null
     property var iban: null
