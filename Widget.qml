@@ -184,8 +184,8 @@ Ui.Panel {
                     Ui.PanelSeparator { Layout.fillWidth: true; foreground: root.foreground }
                     Text {
                         Layout.fillWidth: true
-                        textFormat: Text.PlainText
-                        text: root.copiedKind ? root.copiedKind + " copied · without separators" : "R  Refresh all    C  Copy row    ↑↓  Select"
+                        textFormat: root.copiedKind ? Text.PlainText : Text.RichText
+                        text: root.copiedKind ? root.copiedKind + " copied · without separators" : "<b>R</b>efresh&nbsp;&nbsp; <b>C</b>opy"
                         color: root.copiedKind ? root.foreground : root.muted
                         font.family: root.fontFamily
                         font.pixelSize: Style.font.caption
