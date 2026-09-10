@@ -5,8 +5,12 @@ A small, offline **Omarchy shell plugin** for generating mock data while develop
 - Belgian INSS / rijksregisternummer with a real generated birth date and valid national-register checksum, including the rule for births from 2000 onward.
 - IBAN country selector: Belgium, Netherlands, Germany, and France.
 - Generate either value independently. Changing country immediately generates a matching IBAN.
-- Copy buttons put the raw value on the clipboard, without spaces or punctuation. Display fields can also be selected and copied manually.
+- Inline copy buttons put the raw value on the clipboard, without spaces or punctuation.
 - Tab between controls, Enter/Space to activate, and Escape or an outside click to dismiss.
+
+![Yenerator native Omarchy popup](docs/design.png)
+
+The popup uses Omarchy's native hero, section headers, separators, country dropdown, and action buttons. Its default dice icon can be replaced through the widget's `icon` setting. See the [icon options](docs/icons.md) and [design notes](docs/design.md).
 
 ## Install
 
