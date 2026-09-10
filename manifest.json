@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "jihmy.yenerator",
+  "name": "Yenerator",
+  "version": "0.1.0",
+  "description": "Offline mock INSS and IBAN generator",
+  "author": "jihmy",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Widget.qml" },
+  "barWidget": {
+    "displayName": "Yenerator",
+    "description": "Generate and copy mock identifiers",
+    "category": "Utilities",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
