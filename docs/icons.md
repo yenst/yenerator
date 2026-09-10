@@ -1,5 +1,7 @@
 # Icon options
 
+Browse and search the full [Nerd Fonts icon catalog](https://www.nerdfonts.com/cheat-sheet).
+
 These are existing Nerd Fonts Material Design glyphs, verified against the [official glyph catalog](https://github.com/ryanoasis/nerd-fonts/blob/master/glyphnames.json). The preview uses the locally installed Maple Mono NF font.
 
 ![Icon options](icons.png)

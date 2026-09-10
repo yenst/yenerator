@@ -93,7 +93,7 @@ Ui.Panel {
         anchors.fill: parent
         bar: root.bar
         text: root.icon
-        tooltipText: "Yenerator · mock data"
+        tooltipText: "Yenerator"
         onPressed: root.toggle()
     }
 
@@ -129,7 +129,6 @@ Ui.Panel {
                     Ui.PanelHero {
                         Layout.fillWidth: true
                         title: "Yenerator"
-                        meta: "Mock data"
                         foreground: root.foreground
                         fontFamily: root.fontFamily
                         iconComponent: Text {
